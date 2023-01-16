@@ -8,6 +8,7 @@ bot = Bot(token=config.TOKEN)
 dp = Dispatcher(bot=bot)
 
 
+#обработчик который обрабатывает команду start
 @dp.message_handler(commands=['start'])
 async def start_bot(message: types.Message):
     #Логируем
