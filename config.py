@@ -4,6 +4,12 @@ TOKEN_API_WEATHER = "6c06cce7d63081151f29f7af1fe4bf97"
 
 CURRENT_WEATHER_API_CALL = (
         'https://api.openweathermap.org/data/2.5/weather?'
-        'lat={latitude}&lon={longitude}&'
-        'appid=' + TOKEN_API_WEATHER + '&units=metric'
+        'lat={latitude}&lon={longitude}'
+        '&lang=ru&appid=' + TOKEN_API_WEATHER + '&units=metric'
+)
+
+FIVE_DAYS_WEATHER_API_CALL = (
+        'https://api.openweathermap.org/data/2.5/forecast?lat={latitude}&lon={longitude}&lang=ru'
+        '&appid=' + TOKEN_API_WEATHER + '&units=metric'
+
 )
