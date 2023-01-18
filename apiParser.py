@@ -5,7 +5,7 @@ from enum import IntEnum
 import json
 import requests
 
-from coordinates import Coordinates
+
 import config
 
 Celsius: TypeAlias = float
@@ -37,9 +37,9 @@ class Weather:
 
 
 # Возвращает данные погоды по координатам
-def get_weather(coordinates=Coordinates) -> Weather:
+def get_weather(coordinates) -> Weather:
     openweather_response = _get_openweather_response(
-        longitude=coordinates.longitude, latitude=coordinates.latitude
+        longitude=coordinates['lon'], latitude=coordinates['lat']
     )
     weather = _parse_openweather_response(openweather_response)
     return weather
