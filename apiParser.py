@@ -65,6 +65,45 @@ def _parse_openweather_response(openweather_response: str) -> Weather:
     )
 
 
+# Возвращает данные на завтра и на 3 и 5 дней
+def get_weather_for_next_days(coordinates, days_amoount=1):
+    url = config.FIVE_DAYS_WEATHER_API_CALL.format(longitude=coordinates.lon, latitude=coordinates.lat)
+    weather_list = json.loads(requests.get(url).text)['list']
+    current_day = datetime.now().day
+    filter_time = 15
+
+    # Адекватная реализация
+    # def filter_date(item):
+    #     filter_time = 15
+    #     item_date = datetime.strptime(item['dt_txt'], '%Y-%m-%d %H:%M:%S')
+    #     if(current_day == item_date.day and  filter_time == item_date.hour):
+    #         return True
+    #     else:
+    #         current_day = item_date.day
+    #         return False
+    # print(dict)
+    #
+    # filtred_dict = filter(filter_date, dict)
+
+    filtred_dict = []
+    for item in weather_list:
+        item_date = datetime.strptime(item['dt_txt'], '%Y-%m-%d %H:%M:%S')
+        if current_day == item_date.day and filter_time == item_date.hour:
+            filtred_dict.append(item)
+        elif current_day != item_date.day:
+            current_day = item_date.day
+
+    if days_amoount == 1:
+        return filtred_dict[1]
+    elif days_amoount == 3:
+        del filtred_dict[0]
+        del filtred_dict[2:len(filtred_dict)]
+    elif days_amoount == 5:
+        del filtred_dict[0]
+
+    return filtred_dict
+
+
 def _parse_location(openweather_dict: dict) -> str:
     return openweather_dict['name']
 
