@@ -1,15 +1,16 @@
 import datetime
 import pytz
-
+import prettytable as pt
 from aiogram import Bot, Dispatcher, types
 from aiogram.dispatcher.filters import Text
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 
 import config
 from apiParser import get_weather, get_weather_for_next_days
 
 bot = Bot(token=config.TOKEN_API_TELEGRAM)
 dp = Dispatcher(bot=bot)
+import html
 
 
 # Для хранения координат пользователя
@@ -67,11 +68,34 @@ async def get_today_weather(message: types.Message):
                          f' По ощущениям {weather_data["main"]["feels_like"]}°C')
 
 
+def get_table(weather_data, weather_now):
+    table = pt.PrettyTable(['Дата', '°C', 'Ощущается'])
+    table.align['Дата'] = 'l'
+    table.align['°C'] = 'r'
+    table.align['Ощущается'] = 'с'
+
+    data_now = datetime.datetime.now(tz=pytz.timezone("Asia/Yekaterinburg")).strftime("%d.%m")
+    data = [(data_now, int(weather_now.temperature), int(weather_now.temperature_feeling))]
+
+    for i in weather_data:
+        data.append(
+            (datetime.datetime.strptime(i['dt_txt'], '%Y-%m-%d %H:%M:%S').strftime("%d.%m"), int(i['main']['temp']),
+             int(i['main']['feels_like']))
+        )
+
+    for symbol, price, change in data:
+        table.add_row([symbol, price, change])
+
+    return table
+
+
 # Выводим погоду на 3 дня
 @dp.message_handler(Text(equals="📆 На 3 дня"))
 async def get_today_weather(message: types.Message):
     weather_data = get_weather_for_next_days(COORDINATES_DATA[message.from_user.id], 3)
     weather_now = get_weather(COORDINATES_DATA[message.from_user.id])
+    table = get_table(weather_data, weather_now)
+    await message.answer(f'<pre>{table}</pre>', parse_mode=types.ParseMode.HTML)
 
 
 # Выводим погоду на 5 дней
@@ -79,4 +103,5 @@ async def get_today_weather(message: types.Message):
 async def get_tomorrow_weather(message: types.Message):
     weather_data = get_weather_for_next_days(COORDINATES_DATA[message.from_user.id], 5)
     weather_now = get_weather(COORDINATES_DATA[message.from_user.id])
-    await message.answer('Успех!', reply_markup=kb_menu)
+    table = get_table(weather_data, weather_now)
+    await message.answer(f'<pre>{table}</pre>', parse_mode=types.ParseMode.HTML)

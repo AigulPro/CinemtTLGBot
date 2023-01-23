@@ -6,6 +6,8 @@ import json
 import requests
 
 import config
+import html.parser
+
 
 Celsius: TypeAlias = float
 
