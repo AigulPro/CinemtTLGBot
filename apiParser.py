@@ -6,6 +6,7 @@ import json
 import requests
 
 import config
+import html.parser
 
 Celsius: TypeAlias = float
 
@@ -33,6 +34,8 @@ class Weather:
     wind_direction: str
     sunrise: datetime
     sunset: datetime
+    max_temperature: Celsius
+    min_temperature: Celsius
 
 
 # Возвращает данные погоды по координатам
@@ -61,7 +64,10 @@ def _parse_openweather_response(openweather_response: str) -> Weather:
         sunrise=_parse_sun_time(openweather_dict, 'sunrise'),
         sunset=_parse_sun_time(openweather_dict, 'sunset'),
         wind_speed=_parse_wind_speed(openweather_dict),
-        wind_direction=_parse_wind_direction(openweather_dict)
+        wind_direction=_parse_wind_direction(openweather_dict),
+        max_temperature=_parse_temperature_max(openweather_dict),
+        min_temperature=_parse_temperature_min(openweather_dict),
+
     )
 
 
@@ -110,6 +116,18 @@ def _parse_location(openweather_dict: dict) -> str:
 
 def _parse_temperature(openweather_dict: dict) -> Celsius:
     return openweather_dict['main']['temp']
+
+
+def _parse_temperature(openweather_dict: dict) -> Celsius:
+    return openweather_dict['main']['temp']
+
+
+def _parse_temperature_min(openweather_dict: dict) -> Celsius:
+    return openweather_dict['main']['temp_min']
+
+
+def _parse_temperature_max(openweather_dict: dict) -> Celsius:
+    return openweather_dict['main']['temp_max']
 
 
 def _parse_temperature_feeling(openweather_dict: dict) -> Celsius:
