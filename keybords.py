@@ -36,4 +36,4 @@ inline_kb_many_days.add(BTN_DOP_MANY_DAYS)
 BTN_DOP_MANY_5DAYS = InlineKeyboardButton('Подробнее', callback_data='dop_info_5table')
 
 inline_kb_many_5days = InlineKeyboardMarkup()
-inline_kb_many_5days.add(BTN_DOP_MANY_DAYS)
+inline_kb_many_5days.add(BTN_DOP_MANY_5DAYS)
